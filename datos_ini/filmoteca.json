@@ -1,0 +1,35 @@
+[ {
+  "idPeliculaJSON": 1,
+  "tituloPeliJSON": "El Origen",
+  "directorJSON": "Christopher Nolan",
+  "generoJSON": "Ciencia Ficción",
+  "duracionHorasJSON": 2.48
+},
+{
+  "idPeliculaJSON": 2,
+  "tituloPeliJSON": "El Padrino",
+  "directorJSON": "Francis Ford Coppola",
+  "generoJSON": "Crimen",
+  "duracionHorasJSON": 2.92
+},
+{
+  "idPeliculaJSON": 3,
+  "tituloPeliJSON": "Tiempos Violentos",
+  "directorJSON": "Quentin Tarantino",
+  "generoJSON": "Crimen",
+  "duracionHorasJSON": 2.54
+},
+{
+  "idPeliculaJSON": 4,
+  "tituloPeliJSON": "Sueños de Fuga",
+  "directorJSON": "Frank Darabont",
+  "generoJSON": "Drama",
+  "duracionHorasJSON": 2.37
+},
+{
+  "idPeliculaJSON": 5,
+  "tituloPeliJSON": "Forrest Gump",
+  "directorJSON": "Robert Zemeckis",
+  "generoJSON": "Drama",
+  "duracionHorasJSON": 2.33
+} ]

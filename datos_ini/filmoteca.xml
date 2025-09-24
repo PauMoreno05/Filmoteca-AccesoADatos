@@ -1,0 +1,37 @@
+<peliculas>
+    <pelicula>
+        <idPelicula>1</idPelicula>
+        <tituloPeli>El Origen</tituloPeli>
+        <director>Christopher Nolan</director>
+        <genero>Ciencia Ficción</genero>
+        <duracionHoras>2.48</duracionHoras>
+    </pelicula>
+    <pelicula>
+        <idPelicula>2</idPelicula>
+        <tituloPeli>El Padrino</tituloPeli>
+        <director>Francis Ford Coppola</director>
+        <genero>Crimen</genero>
+        <duracionHoras>2.92</duracionHoras>
+    </pelicula>
+    <pelicula>
+        <idPelicula>3</idPelicula>
+        <tituloPeli>Tiempos Violentos</tituloPeli>
+        <director>Quentin Tarantino</director>
+        <genero>Crimen</genero>
+        <duracionHoras>2.54</duracionHoras>
+    </pelicula>
+    <pelicula>
+        <idPelicula>4</idPelicula>
+        <tituloPeli>Sueños de Fuga</tituloPeli>
+        <director>Frank Darabont</director>
+        <genero>Drama</genero>
+        <duracionHoras>2.37</duracionHoras>
+    </pelicula>
+    <pelicula>
+        <idPelicula>5</idPelicula>
+        <tituloPeli>Forrest Gump</tituloPeli>
+        <director>Robert Zemeckis</director>
+        <genero>Drama</genero>
+        <duracionHoras>2.33</duracionHoras>
+    </pelicula>
+</peliculas>
