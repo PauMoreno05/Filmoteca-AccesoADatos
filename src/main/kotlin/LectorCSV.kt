@@ -9,8 +9,8 @@ data class Filmoteca(val idPelicula: Int, val tituloPeli: String, val director: 
 
 //prueba git
 fun main() {
-    val archivoCSV = Path.of("/home/paumorcat2/IdeaProjects/Filmoteca-AccesoADatos/datos_ini/filmoteca.csv")
-    val salidaCSV = Path.of("/home/paumorcat2/IdeaProjects/Filmoteca-AccesoADatos/datos_fin/filmoteca2.csv")
+    val archivoCSV = Path.of("datos_ini/filmoteca.csv")
+    val salidaCSV = Path.of("datos_fin/filmoteca2.csv")
     val datos: List<Filmoteca>
     datos = leerDatosInicialesCSV(archivoCSV)
     for (dato in datos) {
