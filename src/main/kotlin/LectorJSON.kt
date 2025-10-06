@@ -1,13 +1,12 @@
 import java.nio.file.Files
 import java.nio.file.Path
-import java.io.File
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
 @Serializable
 data class PeliculaJSON(val idPeliculaJSON: Int, val tituloPeliJSON: String, val directorJSON: String, val generoJSON: String, val duracionHorasJSON: Double)
 
-fun main() {
+fun LectorJSON() {
     val entradaJSON = Path.of("datos_ini/filmoteca.json")
     val salidaJSON = Path.of("datos_fin/filmoteca2.json")
     val datos: List<PeliculaJSON>

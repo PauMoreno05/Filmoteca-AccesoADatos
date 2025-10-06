@@ -30,7 +30,7 @@ data class PeliculasXML(
     val listaPeliculasXML: List<PeliculaXML> = emptyList()
 )
 
-fun main() {
+fun LectorXML() {
     val entradaXML = Path.of("/home/paumorcat2/IdeaProjects/Filmoteca-AccesoADatos/datos_ini/filmoteca.xml")
     val salidaXML = Path.of("/home/paumorcat2/IdeaProjects/Filmoteca-AccesoADatos/datos_fin/filmoteca2.xml")
 

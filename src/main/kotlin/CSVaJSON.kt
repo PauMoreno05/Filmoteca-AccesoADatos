@@ -3,7 +3,7 @@ import java.nio.file.Path
 
 data class PeliculaCON(val idPelicula: Int, val tituloPeli: String, val director: String, val genero: String, val duracionHoras: Double)
 
-fun main() {
+fun CSVaJSON() {
     val entradaCSV = Path.of("datos_ini/filmoteca.csv")
     val salidaJSON = Path.of("datos_fin/filmoteca_convertido.json")
 

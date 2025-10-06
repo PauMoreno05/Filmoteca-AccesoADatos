@@ -8,7 +8,7 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 data class Filmoteca(val idPelicula: Int, val tituloPeli: String, val director: String, val genero: String, val duracionHoras: Double )
 
 //prueba git
-fun main() {
+fun LectorCSV() {
     val archivoCSV = Path.of("datos_ini/filmoteca.csv")
     val salidaCSV = Path.of("datos_fin/filmoteca2.csv")
     val datos: List<Filmoteca>
