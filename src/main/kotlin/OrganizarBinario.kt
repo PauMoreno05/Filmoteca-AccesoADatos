@@ -10,10 +10,10 @@ data class PeliculaBinaria(val idPeliculaJSON: Int, val tituloPeliJSON: String, 
 
 const val TAMANO_ID = Int.SIZE_BYTES // 4 bytes
 const val TAMANO_TITULO = 40 // String de tamaño fijo 20 bytes
-const val TAMANO_DIECTOR = 25 // 8 bytes
+const val TAMANO_DIRECTOR = 25 // 8 bytes
 const val TAMANO_GENERO = 10
 const val TAMANO_DURACION = Double.SIZE_BYTES
-const val TAMANO_REGISTRO = TAMANO_ID + TAMANO_TITULO + TAMANO_DIECTOR + TAMANO_GENERO + TAMANO_GENERO
+const val TAMANO_REGISTRO = TAMANO_ID + TAMANO_TITULO + TAMANO_DIRECTOR + TAMANO_GENERO + TAMANO_DURACION
 
 //Función que crea un fichero (si no existe) o lo vacía (si existe)
 //Si el fichero existe: CREATE se ignora. TRUNCATE_EXISTING se activa y vacía el fichero en el momento de abrirlo.
@@ -34,38 +34,31 @@ fun vaciarCrearFichero(path: Path) {
 }
 fun anadirPelicula(path: Path, idPeliculaJSON: Int, tituloPeliJSON: String, directorJSON: String, generoJSON: String, duracionHorasJSON: Double) {
     val nuevaPeli = PeliculaBinaria(idPeliculaJSON, tituloPeliJSON, directorJSON, generoJSON, duracionHorasJSON)
-// Abrimos el canal en modo APPEND.
-// CREATE: crea el fichero si no existe.
-// WRITE: es necesario para poder escribir.
-// APPEND: asegura que cada escritura se haga al final del fichero.
     try {
-        FileChannel.open(path, StandardOpenOption.WRITE,
-            StandardOpenOption.CREATE, StandardOpenOption.APPEND).use { canal ->
-// Creamos un buffer para la nueva planta
+        FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.APPEND).use { canal ->
             val buffer = ByteBuffer.allocate(TAMANO_REGISTRO)
-// Llenamos el buffer con los datos de la nueva planta
-// (misma lógica que en la función de escritura inicial)
-            38
+
             buffer.putInt(nuevaPeli.idPeliculaJSON)
-            val nombreBytes = nuevaPeli.tituloPeliJSON
-                .padEnd(20, ' ')
-                .toByteArray(Charset.defaultCharset())
-            buffer.put(nombreBytes, 0, 20)
+            buffer.put(nuevaPeli.tituloPeliJSON.padEnd(TAMANO_TITULO, ' ').toByteArray(Charset.defaultCharset()), 0, TAMANO_TITULO)
+            buffer.put(nuevaPeli.directorJSON.padEnd(TAMANO_DIRECTOR, ' ').toByteArray(Charset.defaultCharset()), 0, TAMANO_DIRECTOR)
+            buffer.put(nuevaPeli.generoJSON.padEnd(TAMANO_GENERO, ' ').toByteArray(Charset.defaultCharset()), 0, TAMANO_GENERO)
             buffer.putDouble(nuevaPeli.duracionHorasJSON)
+
             buffer.flip()
-// Escribimos el buffer en el canal. Gracias a APPEND,
-// se escribirá al final del fichero.
+
             while (buffer.hasRemaining()) {
                 canal.write(buffer)
             }
             println("Pelicula '${nuevaPeli.tituloPeliJSON}' añadida con éxito.")
         }
     } catch (e: Exception) {
+        e.printStackTrace() // 👈 así verás el error real si vuelve a fallar
         println("Error al añadir la Pelicula: ${e.message}")
     }
 }
+
 fun leerPeliculas(path: Path): List<PeliculaBinaria> {
-    val plantas = mutableListOf<PeliculaBinaria>()
+    val peliculas = mutableListOf<PeliculaBinaria>()
 // Abrimos un canal de solo lectura al fichero
     FileChannel.open(path, StandardOpenOption.READ).use { canal ->
 // Buffer para leer un registro a la vez
@@ -75,17 +68,25 @@ fun leerPeliculas(path: Path): List<PeliculaBinaria> {
             val id = buffer.getInt()
             val nombreBytes = ByteArray(TAMANO_TITULO)
             buffer.get(nombreBytes)
-            val nombre = String(nombreBytes,
+            val titulo = String(nombreBytes,
                 Charset.defaultCharset()).trim()
-            val altura = buffer.getDouble()
-            plantas.add(PlantaBinaria(id, nombre, altura))
+            val directorBytes = ByteArray(TAMANO_DIRECTOR)
+            buffer.get(directorBytes)
+            val director = String(directorBytes,
+                Charset.defaultCharset()).trim()
+            val generoBytes = ByteArray(TAMANO_GENERO)
+            buffer.get(generoBytes)
+            val genero = String(generoBytes,
+                Charset.defaultCharset()).trim()
+            val duracion = buffer.getDouble()
+            peliculas.add(PeliculaBinaria(id, titulo, director,genero, duracion ))
             buffer.clear()
         }
     }
-    return plantas
+    return peliculas
 }
 
-fun modificarAlturaPlanta(path: Path, idPlanta: Int, nuevaAltura: Double)
+fun modificarAlturaPelicula(path: Path, idPeliculaJSON: Int, nuevaDuracion: Double)
 {
 // Abrimos un canal con permisos de lectura y escritura
     FileChannel.open(path, StandardOpenOption.READ,
@@ -101,33 +102,33 @@ fun modificarAlturaPlanta(path: Path, idPlanta: Int, nuevaAltura: Double)
             val posicionActual = canal.position()
             buffer.flip()
             val id = buffer.getInt()
-            if (id == idPlanta) {
+            if (id == idPeliculaJSON) {
 // Hemos encontrado el registro. Calculamos la posición del campo 'altura'.
 // Posición de inicio del registro (actual - registro) + 4 bytes (id) + 20 bytes (nombre)
-                val posicionAltura = posicionActual - TAMANO_REGISTRO +
-                        TAMANO_ID + TAMANO_NOMBRE
+                val posicionDuracion = posicionActual - TAMANO_REGISTRO +
+                        TAMANO_ID + TAMANO_TITULO + TAMANO_DIRECTOR + TAMANO_GENERO
 // Creamos un buffer solo para el double
-                val bufferAltura = ByteBuffer.allocate(TAMANO_ALTURA)
-                bufferAltura.putDouble(nuevaAltura)
-                bufferAltura.flip()
+                val bufferDuracion = ByteBuffer.allocate(TAMANO_DURACION)
+                bufferDuracion.putDouble(nuevaDuracion)
+                bufferDuracion.flip()
 // Escribimos el nuevo valor en la posición exacta del fichero
-                canal.write(bufferAltura, posicionAltura)
+                canal.write(bufferDuracion, posicionDuracion)
                 encontrado = true
             }
             buffer.clear()
         }
         if (encontrado) {
-            println("Altura de la planta con ID $idPlanta modificada a$nuevaAltura")
+            println("Duracion de la pelicula con ID $idPeliculaJSON modificada a$nuevaDuracion")
         } else {
-            println("No se encontró la planta con ID $idPlanta")
+            println("No se encontró la Pelicula con ID $idPeliculaJSON")
         }
     }
 }
 
-fun eliminarPlanta(path: Path, idPlanta: Int) {
+fun eliminarPlanta(path: Path, idPeliculaJSON: Int) {
 // Creamos un fichero temporal en el mismo directorio
     val pathTemporal = Paths.get(path.toString() + ".tmp")
-    var plantaEncontrada = false
+    var peliculaEncontrada = false
 // Abrimos el canal de lectura para el fichero original
     FileChannel.open(path, StandardOpenOption.READ).use { canalLectura ->
 // Abrimos el canal de escritura para el fichero temporal
@@ -138,8 +139,8 @@ fun eliminarPlanta(path: Path, idPlanta: Int) {
             while (canalLectura.read(buffer) > 0) {
                 buffer.flip()
                 val id = buffer.getInt() // Solo necesitamos el ID
-                if (id == idPlanta) {
-                    plantaEncontrada = true
+                if (id == idPeliculaJSON) {
+                    peliculaEncontrada = true
 // Si es la planta a eliminar, no hacemos nada.
 // El buffer se limpiará para la siguiente lectura.
                 } else {
@@ -152,27 +153,26 @@ fun eliminarPlanta(path: Path, idPlanta: Int) {
             }
         }
     }
-    if (plantaEncontrada) {
-        44
+    if (peliculaEncontrada) {
 // Si se encontró y eliminó, reemplazar fichero original con el temporal
         Files.move(pathTemporal, path, StandardCopyOption.REPLACE_EXISTING)
-        println("Planta con ID $idPlanta eliminada con éxito.")
+        println("Pelicula con ID $idPeliculaJSON eliminada con éxito.")
     } else {
 // Si no se encontró, no hace falta hacer nada, borramos el temporal
         Files.delete(pathTemporal)
-        println("No se encontró ninguna planta con ID $idPlanta.")
+        println("No se encontró ninguna pelicula con ID $idPeliculaJSON.")
     }
 }
 
 
-fun main() {
+fun OrganizarBinario() {
     val archivoPath: Path = Paths.get("datos_fin/binario/datos.bin")
     val lista = listOf(
-        PlantaBinaria(1, "El Origen", "Christopher Nolan","Ciencia Ficción", 2.48 ),
-        PlantaBinaria(2, "El Padrino", "Francis Ford Coppola","Crimen", 2.92),
-        PlantaBinaria(3, "Tiempos Violentos", "Quentin Tarantino", "Crimen",2.54),
-        PlantaBinaria(3, "Sueños de Fuga", "Frank Darabont", "Drama", 2.37),
-        PlantaBinaria(3, "Forrest Gump", "Robert Zemeckis", "Drama", 2.33)
+        PeliculaBinaria(1, "El Origen", "Christopher Nolan","Ciencia Ficción", 2.48 ),
+        PeliculaBinaria(2, "El Padrino", "Francis Ford Coppola","Crimen", 2.92),
+        PeliculaBinaria(3, "Tiempos Violentos", "Quentin Tarantino", "Crimen",2.54),
+        PeliculaBinaria(4, "Sueños de Fuga", "Frank Darabont", "Drama", 2.37),
+        PeliculaBinaria(5, "Forrest Gump", "Robert Zemeckis", "Drama", 2.33)
     )
 // vaciar o crear el fichero
     vaciarCrearFichero(archivoPath)
@@ -184,21 +184,21 @@ fun main() {
     val leidas = leerPeliculas(archivoPath)
     println("Peliculas leídas del fichero:")
     for (dato in leidas) {
-        println(" - ID: ${dato.id_planta}, Nombre común:${dato.nombre_comun}, Altura: ${dato.altura_maxima} metros")
+        println(" - ID: ${dato.idPeliculaJSON}, Titulo Pelicula:${dato.tituloPeliJSON}, Director: ${dato.directorJSON}, Genero: ${dato.generoJSON}, Duracion: ${dato.duracionHorasJSON} horas")
     }
-    modificarAlturaPlanta(archivoPath, 2, 5.5)
+    modificarAlturaPelicula(archivoPath, 2, 2.96)
 // --- Volver a leer para verificar el cambio ---
-    val leidasDespuesDeModificar = leerPlantas(archivoPath)
-    println("Plantas leídas después de la modificación:")
+    val leidasDespuesDeModificar = leerPeliculas(archivoPath)
+    println("Peliculas leídas después de la modificación:")
     for (dato in leidasDespuesDeModificar) {
-        println(" - ID: ${dato.id_planta}, Nombre común: ${dato.nombre_comun}, Altura: ${dato.altura_maxima} metros")
+        println(" - ID: ${dato.idPeliculaJSON}, Titulo Pelicula:${dato.tituloPeliJSON}, Director: ${dato.directorJSON}, Genero: ${dato.generoJSON}, Duracion: ${dato.duracionHorasJSON} horas")
     }
     // --- Eliminar una planta
     eliminarPlanta(archivoPath, 3)
 // --- Volver a leer para verificar el cambio ---
-    val leidasDespuesDeEliminar = leerPlantas(archivoPath)
+    val leidasDespuesDeEliminar = leerPeliculas(archivoPath)
     println("Plantas leídas después de la modificación:")
     for (dato in leidasDespuesDeEliminar) {
-        println(" - ID: ${dato.id_planta}, Nombre común: ${dato.nombre_comun}, Altura: ${dato.altura_maxima} metros")
+        println(" - ID: ${dato.idPeliculaJSON}, Titulo Pelicula:${dato.tituloPeliJSON}, Director: ${dato.directorJSON}, Genero: ${dato.generoJSON}, Duracion: ${dato.duracionHorasJSON} horas")
     }
 }
