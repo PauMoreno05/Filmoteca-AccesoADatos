@@ -23,7 +23,7 @@ fun OrganizarRutas() {
     5
     println("--- Iniciando la organización de la carpeta: " + carpeta + "---")
     try {
-// 2. Recorrer la carpeta desordenada y utilizar .use para asegurar que los recursos del sistema se cierren correctamente
+// 2. Recorrer la carpeta desordenada y utilizar.use para asegurar que los recursos del sistema se cierren correctamente
                 Files.list(carpeta).use { streamDePaths ->
                     streamDePaths.forEach { pathFichero ->
 // 3. Solo interesan los ficheros, ignorar subcarpetas

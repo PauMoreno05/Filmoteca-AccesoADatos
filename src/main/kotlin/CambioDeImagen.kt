@@ -1,11 +1,12 @@
 import java.awt.Color
 import java.awt.image.BufferedImage
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import javax.imageio.ImageIO
 
-fun main() {
+fun CambioDeColor() {
     val originalPath = Path.of("multimedia/jpg/amanecer1.jpg")
     val copiaPath = Path.of("multimedia/jpg/amanecer1_copia.jpg")
     val grisPath = Path.of("multimedia/jpg/amanecer1_escala_de_grises.png")
@@ -38,4 +39,24 @@ fun main() {
         ImageIO.write(imagen, "png", grisPath.toFile())
         println("Imagen convertida a escala de grises y guardada como: $grisPath")
     }
+}
+
+fun GenerarImagen() {
+    val ancho = 200
+    val alto = 100
+    val imagen = BufferedImage(ancho, alto, BufferedImage.TYPE_INT_RGB)
+// Rellenar la imagen con colores
+    for (x in 0 until ancho) {
+        for (y in 0 until alto) {
+            val rojo = (x * 255) / ancho
+            val verde = (y * 255) / alto
+            val azul = 128
+            val color = Color(rojo, verde, azul)
+            imagen.setRGB(x, y, color.rgb)
+        }
+    }
+// Guardar la imagen
+    val archivo = File("datos_fin/imagen/imagen_generada.png")
+    ImageIO.write(imagen, "png", archivo)
+    println("Imagen generada correctamente: ${archivo.absolutePath}")
 }

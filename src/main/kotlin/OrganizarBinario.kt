@@ -126,7 +126,7 @@ fun importar() {
         return
     }
 
-    // Vaciamos o creamos el fichero binario antes de empezar
+    // Vaciamos/creamos el fichero binario antes de empezar
     vaciarCrearFichero(rutaBinario)
 
     // Recorremos todas las películas leídas y las añadimos una por una
@@ -141,7 +141,7 @@ fun importar() {
         )
     }
 
-    println("Importación completada. Se han añadido ${peliculas.size} películas al fichero binario.")
+    println("Importación completada. Se han añadido ${peliculas.size}.")
 }
 
 
@@ -193,8 +193,7 @@ fun modificarAlturaPelicula(path: Path, idPeliculaJSON: Int, nuevaDuracion: Doub
             if (id == idPeliculaJSON) {
 // Hemos encontrado el registro. Calculamos la posición del campo 'altura'.
 // Posición de inicio del registro (actual - registro) + 4 bytes (id) + 20 bytes (nombre)
-                val posicionDuracion = posicionActual - TAMANO_REGISTRO +
-                        TAMANO_ID + TAMANO_TITULO + TAMANO_DIRECTOR + TAMANO_GENERO
+                val posicionDuracion = posicionActual - TAMANO_REGISTRO + TAMANO_ID + TAMANO_TITULO + TAMANO_DIRECTOR + TAMANO_GENERO
 // Creamos un buffer solo para el double
                 val bufferDuracion = ByteBuffer.allocate(TAMANO_DURACION)
                 bufferDuracion.putDouble(nuevaDuracion)
@@ -213,7 +212,7 @@ fun modificarAlturaPelicula(path: Path, idPeliculaJSON: Int, nuevaDuracion: Doub
     }
 }
 
-fun eliminarPlanta(path: Path, idPeliculaJSON: Int) {
+fun eliminarPelicula(path: Path, idPeliculaJSON: Int) {
 // Creamos un fichero temporal en el mismo directorio
     val pathTemporal = Paths.get(path.toString() + ".tmp")
     var peliculaEncontrada = false
@@ -229,10 +228,10 @@ fun eliminarPlanta(path: Path, idPeliculaJSON: Int) {
                 val id = buffer.getInt() // Solo necesitamos el ID
                 if (id == idPeliculaJSON) {
                     peliculaEncontrada = true
-// Si es la planta a eliminar, no hacemos nada.
+// Si es la pelicla a eliminar, no hacemos nada.
 // El buffer se limpiará para la siguiente lectura.
                 } else {
-// Si NO es la planta a eliminar, escribimos el registro
+// Si NO es la pelicula a eliminar, escribimos el registro
 // completo en el fichero temporal.
                     buffer.rewind() // Rebobinamos para ir al principio
                     canalEscritura.write(buffer)
@@ -294,7 +293,7 @@ fun nuevoReg(path: Path) {
 
 fun modificar(path: Path, id: Int) {
     try {
-        print("Introduzca la NUEVA DURACIÓN (ej: 2.50 horas) para el ID $id: ")
+        print("Introduzca la NUEVA DURACIÓN para el ID $id: ")
         val nuevaDuracion = readLine()?.toDoubleOrNull()
 
         if (nuevaDuracion != null && nuevaDuracion > 0) {
@@ -310,7 +309,7 @@ fun modificar(path: Path, id: Int) {
 
 fun eliminar(path: Path, id: Int) {
     // Llamar a la funcion de eliminación real
-    eliminarPlanta(path, id)
+    eliminarPelicula(path, id)
 }
 
 
@@ -340,11 +339,11 @@ fun OrganizarBinario() {
     }
 
     // Eliminar un registro
-    eliminarPlanta(archivoPath, 3)
+    eliminarPelicula(archivoPath, 3)
 
     // Volver a leer para verificar el cambio
     val leidasDespuesDeEliminar = leerPeliculas(archivoPath)
-    println("\nPeliculas leídas después de la eliminación (Comprobación 9 - Eliminar):")
+    println("\nPeliculas leídas después de la eliminación :")
     for (dato in leidasDespuesDeEliminar) {
         println(" - ID: ${dato.idPeliculaJSON}, Titulo Pelicula:${dato.tituloPeliJSON}, Director: ${dato.directorJSON}, Genero: ${dato.generoJSON}, Duracion: ${dato.duracionHorasJSON} horas")
     }
