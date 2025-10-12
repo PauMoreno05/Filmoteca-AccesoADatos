@@ -93,16 +93,14 @@ fun anadirPelicula(
             // para que los datos se puedan escribir en el fichero.
             buffer.flip()
 
-            // Escribimos el contenido del buffer en el canal (al final del fichero)
+            // Escribimos el contenido del buffer en el canal
             while (buffer.hasRemaining()) {
                 canal.write(buffer)
             }
 
-            // Mensaje de confirmación
             println("Pelicula '${nuevaPeli.tituloPeliJSON}' añadida con éxito.")
         }
     } catch (e: Exception) {
-        // Si ocurre algún error, mostramos el mensaje y el stack trace para depurar
         println("Error al añadir la Pelicula: ${e.message}")
         e.printStackTrace()
     }
@@ -143,7 +141,6 @@ fun importar() {
         )
     }
 
-    // Mensaje final informando que se completó la importación
     println("Importación completada. Se han añadido ${peliculas.size} películas al fichero binario.")
 }
 
@@ -266,7 +263,7 @@ fun mostrarTodo(path: Path) {
         println("=== LISTADO DE PELÍCULAS ===")
 
         peliculas.forEach { peli ->
-            // LÍNEA MODIFICADA para mostrar el formato 'ID: X, Título: Y, ...'
+            // Linea para mostrar el formato
             println("ID: ${peli.idPeliculaJSON}, Título: \"${peli.tituloPeliJSON.trim()}\", Director: \"${peli.directorJSON.trim()}\", Género: \"${peli.generoJSON.trim()}\", Duración: ${String.format("%.2f", peli.duracionHorasJSON)} horas")
         }
 
@@ -275,7 +272,6 @@ fun mostrarTodo(path: Path) {
     }
 }
 
-// Función nuevoReg() (Punto 2 del Menú)
 fun nuevoReg(path: Path) {
     println("=== 2. AÑADIR NUEVO REGISTRO ===")
     try {
@@ -296,14 +292,13 @@ fun nuevoReg(path: Path) {
     }
 }
 
-// Función modificar() (Punto 3 del Menú)
 fun modificar(path: Path, id: Int) {
     try {
         print("Introduzca la NUEVA DURACIÓN (ej: 2.50 horas) para el ID $id: ")
         val nuevaDuracion = readLine()?.toDoubleOrNull()
 
         if (nuevaDuracion != null && nuevaDuracion > 0) {
-            // Llama a la función de modificación real
+            // Llamar a la funcion de modificación real
             modificarAlturaPelicula(path, id, nuevaDuracion)
         } else {
             println("Duración introducida no valida.")
@@ -313,42 +308,41 @@ fun modificar(path: Path, id: Int) {
     }
 }
 
-// Función eliminar() (Punto 4 del Menú)
 fun eliminar(path: Path, id: Int) {
-    // Llama a la función de eliminación real
+    // Llamar a la funcion de eliminación real
     eliminarPlanta(path, id)
 }
 
-// ... [El resto del código OrganizarBinario.kt, incluyendo OrganizarBinario()] ...
+
 
 fun OrganizarBinario() {
     val archivoPath: Path = Paths.get("datos_fin/binario/datos.bin")
 
-    // --- Llama a importar() para vaciar/crear el fichero y llenarlo desde el CSV (Puntos 2, 3, 4) ---
+    // Llama a importar() para vaciar/crear el fichero y llenarlo desde el CSV
     importar()
 
 
-    // --- Comprueba: Leer el fichero binario y mostrar (Punto 6 del enunciado) ---
+    // Comprueba: Leer el fichero binario y mostrar
     val leidas = leerPeliculas(archivoPath)
     println("\nPeliculas leídas del fichero después de la importación (Comprobación 6):")
     for (dato in leidas) {
         println(" - ID: ${dato.idPeliculaJSON}, Titulo Pelicula:${dato.tituloPeliJSON}, Director: ${dato.directorJSON}, Genero: ${dato.generoJSON}, Duracion: ${dato.duracionHorasJSON} horas")
     }
 
-    // --- Modificar un registro (Punto 7 del enunciado) ---
+    // Modificar un registro
     modificarAlturaPelicula(archivoPath, 2, 2.96)
 
-    // --- Volver a leer para verificar el cambio (Punto 9 - después de modificar) ---
+    // Volver a leer para verificar el cambio
     val leidasDespuesDeModificar = leerPeliculas(archivoPath)
     println("\nPeliculas leídas después de la modificación (Comprobación 9 - Modificar):")
     for (dato in leidasDespuesDeModificar) {
         println(" - ID: ${dato.idPeliculaJSON}, Titulo Pelicula:${dato.tituloPeliJSON}, Director: ${dato.directorJSON}, Genero: ${dato.generoJSON}, Duracion: ${dato.duracionHorasJSON} horas")
     }
 
-    // --- Eliminar un registro (Punto 8 del enunciado) ---
+    // Eliminar un registro
     eliminarPlanta(archivoPath, 3)
 
-    // --- Volver a leer para verificar el cambio (Punto 9 - después de eliminar) ---
+    // Volver a leer para verificar el cambio
     val leidasDespuesDeEliminar = leerPeliculas(archivoPath)
     println("\nPeliculas leídas después de la eliminación (Comprobación 9 - Eliminar):")
     for (dato in leidasDespuesDeEliminar) {
