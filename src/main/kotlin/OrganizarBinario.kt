@@ -154,9 +154,9 @@ fun leerPeliculas(path: Path): List<PeliculaBinaria> {
         while (canal.read(buffer) > 0) {
             buffer.flip()
             val id = buffer.getInt()
-            val nombreBytes = ByteArray(TAMANO_TITULO)
-            buffer.get(nombreBytes)
-            val titulo = String(nombreBytes,
+            val tituloBytes = ByteArray(TAMANO_TITULO)
+            buffer.get(tituloBytes)
+            val titulo = String(tituloBytes,
                 Charset.defaultCharset()).trim()
             val directorBytes = ByteArray(TAMANO_DIRECTOR)
             buffer.get(directorBytes)

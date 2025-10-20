@@ -26,8 +26,7 @@ fun CambioDeColor() {
                 Esta fórmula pondera los colores rojo, verde y azul según la
                 sensibilidad del ojo humano. El resultado es un único valor de brillo que
                 convertimos a entero. */
-                val gris = (color.red * 0.299 + color.green * 0.587 + color.blue *
-                        0.114).toInt()
+                val gris = (color.red * 0.299 + color.green * 0.587 + color.blue * 0.114).toInt()
 // Creamos un nuevo color donde los componentes rojo, verde y azul
 // son todos iguales al valor de 'gris' que hemos calculado.
                 val colorGris = Color(gris, gris, gris)

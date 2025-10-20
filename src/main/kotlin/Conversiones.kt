@@ -53,9 +53,7 @@ fun CSVaXML() {
 
         // Mapeo: Filmoteca (CSV) a PeliculaXML (XML). Los campos coinciden.
         val peliculasXML = peliculasCSV.map {
-            PeliculaXML(
-                it.idPelicula, it.tituloPeli, it.director, it.genero, it.duracionHoras
-            )
+            PeliculaXML(it.idPelicula, it.tituloPeli, it.director, it.genero, it.duracionHoras)
         }
 
         escribirDatosXML(salidaXML, peliculasXML)
